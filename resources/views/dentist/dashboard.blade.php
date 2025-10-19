@@ -1,5 +1,3 @@
-{{-- DEBUG: Check if data exists --}}
-{{-- @dd($todaysAppointments ?? 'NOT SET') --}}
 @extends('layouts.app')
 
 @section('content')
@@ -29,7 +27,7 @@
                             <th>Patient</th>
                             <th>Service</th>
                             <th>Status</th>
-                            <th>Actions</th>
+                            <th>Medical Notes</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -46,38 +44,13 @@
                                 @endif
                             </td>
                             <td>
-                                @if($appt->status === 'confirmed')
-                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#completeModal{{ $appt->id }}">
-                                        Complete
-                                    </button>
+                                @if($appt->medical_notes)
+                                    <small>{{ Str::limit($appt->medical_notes, 50) }}</small>
+                                @else
+                                    <span class="text-muted">—</span>
                                 @endif
                             </td>
                         </tr>
-
-                        <!-- Complete Modal -->
-                        <div class="modal fade" id="completeModal{{ $appt->id }}" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Complete Appointment</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <form method="POST" action="{{ route('dentist.appointments.complete', $appt->id) }}">
-                                        @csrf
-                                        <div class="modal-body">
-                                            <div class="mb-3">
-                                                <label for="medical_notes" class="form-label">Medical Notes (Optional)</label>
-                                                <textarea class="form-control" name="medical_notes" rows="3">{{ old('medical_notes') }}</textarea>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-success">Mark as Completed</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                         @endforeach
                     </tbody>
                 </table>

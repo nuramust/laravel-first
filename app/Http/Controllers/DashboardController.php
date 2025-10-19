@@ -18,8 +18,6 @@ class DashboardController extends Controller
 
             case 'dentist':
                 $dentistId = $user->id;
-
-                // Today's appointments
                 $today = Carbon::today()->format('Y-m-d');
                 $todaysAppointments = Appointment::with(['patient', 'service'])
                                                 ->where('dentist_id', $dentistId)
@@ -27,8 +25,6 @@ class DashboardController extends Controller
                                                 ->whereIn('status', ['confirmed', 'completed'])
                                                 ->orderBy('start_time')
                                                 ->get();
-
-                // Upcoming appointments
                 $upcoming = Appointment::with(['patient', 'service'])
                                       ->where('dentist_id', $dentistId)
                                       ->whereBetween('appointment_date', [
@@ -39,11 +35,16 @@ class DashboardController extends Controller
                                       ->orderBy('appointment_date')
                                       ->orderBy('start_time')
                                       ->get();
-
                 return view('dentist.dashboard', compact('todaysAppointments', 'upcoming'));
 
             case 'receptionist':
-                return view('receptionist.dashboard');
+                $today = Carbon::today()->format('Y-m-d');
+                $appointments = Appointment::with(['patient', 'dentist', 'service'])
+                                          ->where('appointment_date', $today)
+                                          ->whereIn('status', ['confirmed', 'completed'])
+                                          ->orderBy('start_time')
+                                          ->get();
+                return view('receptionist.dashboard', compact('appointments'));
 
             case 'patient':
             default:
@@ -53,7 +54,6 @@ class DashboardController extends Controller
                                 ->orderBy('appointment_date')
                                 ->orderBy('start_time')
                                 ->get();
-
                 return view('dashboard', compact('upcoming'));
         }
     }

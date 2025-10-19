@@ -14,6 +14,8 @@ class Appointment extends Model
         'dentist_id',
         'service_id',
         'price', // ← added
+        'checked_in',        // ← added
+        'checked_in_at',     // ← added
         'medical_notes',
         'appointment_date',
         'start_time',
@@ -23,9 +25,11 @@ class Appointment extends Model
     ];
 
     protected $casts = [
-        'appointment_date' => 'date',
-        'start_time' => 'datetime:H:i',
-        'end_time' => 'datetime:H:i',
+        'appointment_date' => 'date:Y-m-d',
+        'start_time' => 'datetime:H:i:s',
+        'end_time' => 'datetime:H:i:s',
+        'checked_in_at' => 'datetime',
+        'checked_in' => 'boolean',
     ];
 
     public function patient()
